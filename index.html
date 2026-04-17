@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foxbit Video Pro - AOUISSI Rabah</title>
+    <style>
+        :root { --primary: #6366f1; --secondary: #a855f7; --success: #10b981; --bg: #0b0e14; --card-bg: rgba(30, 41, 59, 0.7); --glass: rgba(255, 255, 255, 0.05); }
+        body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top right, #1e1b4b, #0b0e14); color: #f8fafc; margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 450px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; margin: 0; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tabs { display: flex; background: var(--glass); border-radius: 15px; padding: 5px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-weight: 600; border-radius: 10px; transition: 0.3s; font-size: 0.8rem; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 10px; margin-bottom: 15px; }
+        .mode-btn { padding: 8px; border: none; border-radius: 8px; background: transparent; color: #64748b; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; font-weight: bold; }
+        .mode-btn.active { background: rgba(255,255,255,0.1); color: white; }
+        .help-text { font-size: 0.75rem; color: #94a3b8; margin-bottom: 15px; line-height: 1.4; background: rgba(99, 102, 241, 0.1); padding: 8px; border-radius: 8px; border-left: 3px solid var(--primary); }
+        label { display: block; font-size: 0.7rem; color: #64748b; margin: 12px 0 4px 5px; text-transform: uppercase; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: white; font-size: 0.95rem; box-sizing: border-box; }
+        .result-panel { background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15)); border-radius: 18px; padding: 15px; text-align: center; margin-top: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .res-value { font-size: 2rem; font-weight: 800; color: var(--success); margin-top: 5px; }
+        footer { text-align: center; margin-top: 25px; font-size: 0.75rem; color: #475569; }
+        .author-tag { color: white; font-weight: 600; border: 1px solid var(--primary); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header"><h1>Foxbit Video Pro</h1></div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('tournage')">🎥 Tournage</button>
+        <button class="tab-btn" onclick="showTab('k7')">📼 Cassettes</button>
+        <button class="tab-btn" onclick="showTab('stream')">🌐 Streaming</button>
+    </div>
+
+    <!-- ONGLET TOURNEGE -->
+    <div id="tab-tournage" class="card">
+        <div class="mode-selector">
+            <button id="t-btn-vol" class="mode-btn active" onclick="setTMode(true)">Vers Volume</button>
+            <button id="t-btn-dur" class="mode-btn" onclick="setTMode(false)">Vers Durée</button>
+        </div>
+        <label id="t-label-input">Durée prévue (Min)</label>
+        <input type="number" id="t_val" placeholder="Entrez une valeur..." oninput="calcT()">
+        <label>Format</label>
+        <select id="t_res" onchange="calcT()" style="margin-bottom:10px">
+            <option value="35" selected>4K Ultra HD</option><option value="15">Full HD (1080p)</option>
+        </select>
+        <select id="t_cod" onchange="calcT()">
+            <option value="1">H.264</option><option value="0.5">H.265</option>
+        </select>
+        <div class="result-panel">
+            <div id="t-res-label" style="font-size:0.65rem; color:#94a3b8">ESPACE REQUIS</div>
+            <div class="res-value" id="res_t">0.00 Go</div>
+        </div>
+    </div>
+
+    <!-- ONGLET CASSETTES -->
+    <div id="tab-k7" class="card" style="display:none;">
+        <div class="mode-selector">
+            <button id="k-btn-vol" class="mode-btn active" onclick="setKMode(true)">Vers Volume</button>
+            <button id="k-btn-dur" class="mode-btn" onclick="setKMode(false)">Vers Durée</button>
+        </div>
+        <label id="k-label-input">Minutes du film enregistré</label>
+        <input type="number" id="k_val" placeholder="Entrez une valeur..." oninput="calcK()">
+        
+        <label style="margin-top:15px">Options de capture</label>
+        <select id="k_res" onchange="calcK()" style="margin-bottom:10px">
+            <option value="3" selected>SD Native (480p)</option><option value="15">Full HD (1080p)</option>
+        </select>
+        <select id="k_cod" onchange="calcK()">
+            <option value="1">MP4 (H.264)</option><option value="0.5">HEVC (H.265)</option>
+        </select>
+
+        <div class="result-panel">
+            <div id="k-res-label" style="font-size:0.65rem; color:#94a3b8">POIDS DU FICHIER</div>
+            <div class="res-value" id="res_k">0.00 Go</div>
+        </div>
+    </div>
+
+    <!-- ONGLET STREAMING -->
+    <div id="tab-stream" class="card" style="display:none;">
+        <div class="mode-selector">
+            <button id="s-btn-conso" class="mode-btn active" onclick="setSMode(true)">Data / Mbps</button>
+            <button id="s-btn-recom" class="mode-btn" onclick="setSMode(false)">Analyse Ligne</button>
+        </div>
+        <div id="s-box-prevoir">
+            <label>Qualité</label>
+            <select id="s_preset" onchange="calcS()">
+                <option value="5" selected>HD 720p (5 Mbps)</option><option value="15">1080p (15 Mbps)</option>
+            </select>
+            <label>Durée (Min)</label>
+            <input type="number" id="s_dur" oninput="calcS()">
+        </div>
+        <div id="s-box-analyser" style="display:none;">
+            <label>Votre Upload (Mbps)</label>
+            <input type="number" id="s_upload" oninput="calcS()">
+        </div>
+        <div class="result-panel">
+            <div id="s-res-label" style="font-size:0.65rem; color:#94a3b8">ANALYSE RÉSEAU</div>
+            <div class="res-value" id="res_s_val">--</div>
+            <div id="s-recom-text" style="font-size:0.75rem; color:var(--primary); margin-top:8px"></div>
+        </div>
+    </div>
+
+    <footer><span class="author-tag">AOUISSI Rabah</span><br>© 2024 Foxbit Software</footer>
+</div>
+
+<script>
+    function showTab(tab) {
+        document.getElementById('tab-tournage').style.display = tab === 'tournage' ? 'block' : 'none';
+        document.getElementById('tab-k7').style.display = tab === 'k7' ? 'block' : 'none';
+        document.getElementById('tab-stream').style.display = tab === 'stream' ? 'block' : 'none';
+        const btns = document.querySelectorAll('.tab-btn');
+        btns[0].classList.toggle('active', tab === 'tournage');
+        btns[1].classList.toggle('active', tab === 'k7');
+        btns[2].classList.toggle('active', tab === 'stream');
+    }
+
+    function setTMode(isVol) {
+        document.getElementById('t-btn-vol').classList.toggle('active', isVol);
+        document.getElementById('t-btn-dur').classList.toggle('active', !isVol);
+        document.getElementById('t-label-input').innerText = isVol ? "Durée prévue (Min)" : "Taille disponible (Go)";
+        document.getElementById('t-res-label').innerText = isVol ? "ESPACE REQUIS" : "DURÉE ESTIMÉE";
+        calcT();
+    }
+
+    function setKMode(isVol) {
+        document.getElementById('k-btn-vol').classList.toggle('active', isVol);
+        document.getElementById('k-btn-dur').classList.toggle('active', !isVol);
+        document.getElementById('k-label-input').innerText = isVol ? "Minutes du film enregistré" : "Taille du fichier (Go)";
+        document.getElementById('k-res-label').innerText = isVol ? "POIDS DU FICHIER" : "DURÉE ESTIMÉE";
+        calcK();
+    }
+
+    function setSMode(mode) {
+        document.getElementById('s-btn-conso').classList.toggle('active', mode);
+        document.getElementById('s-btn-recom').classList.toggle('active', !mode);
+        document.getElementById('s-box-prevoir').style.display = mode ? 'block' : 'none';
+        document.getElementById('s-box-analyser').style.display = mode ? 'none' : 'block';
+        document.getElementById('s-res-label').innerText = mode ? "DATA CONSOMMÉE" : "RÉSOLUTION CONSEILLÉE";
+        calcS();
+    }
+
+    function calcT() {
+        let v = parseFloat(document.getElementById('t_val').value);
+        let b = parseFloat(document.getElementById('t_res').value) * parseFloat(document.getElementById('t_cod').value);
+        if (!v) return;
+        if (document.getElementById('t-btn-vol').classList.contains('active')) {
+            document.getElementById('res_t').innerText = ((b * v * 60) / 8192).toFixed(2) + " Go";
+        } else {
+            let s = (v * 8192) / b;
+            document.getElementById('res_t').innerText = Math.floor(s/3600)+"h "+Math.floor((s%3600)/60)+"m";
+        }
+    }
+
+    function calcK() {
+        let v = parseFloat(document.getElementById('k_val').value);
+        let b = parseFloat(document.getElementById('k_res').value) * parseFloat(document.getElementById('k_cod').value);
+        if (!v) return;
+        if (document.getElementById('k-btn-vol').classList.contains('active')) {
+            document.getElementById('res_k').innerText = ((b * v * 60) / 8192).toFixed(2) + " Go";
+        } else {
+            let s = (v * 8192) / b;
+            document.getElementById('res_k').innerText = Math.floor(s/3600)+"h "+Math.floor((s%3600)/60)+"m";
+        }
+    }
+
+    function calcS() {
+        const rv = document.getElementById('res_s_val'), rt = document.getElementById('s-recom-text');
+        if (document.getElementById('s-btn-conso').classList.contains('active')) {
+            let bit = parseFloat(document.getElementById('s_preset').value), min = parseFloat(document.getElementById('s_dur').value);
+            rv.innerText = min > 0 ? ((bit * min * 60) / 8192).toFixed(2) + " Go" : "--";
+            rt.innerText = "Upload stable requis : " + (bit * 1.2).toFixed(1) + " Mbps";
+        } else {
+            let up = parseFloat(document.getElementById('s_upload').value);
+            if (!up) return;
+            let s = up / 1.2;
+            rv.innerText = s >= 8 ? "1080p Full HD" : (s >= 4 ? "720p HD" : "480p SD");
+            rt.innerText = s < 1.5 ? "Signal faible" : "Stable avec marge de 20%";
+        }
+    }
+</script>
+</body>
+</html>
